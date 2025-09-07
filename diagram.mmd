@@ -1,0 +1,12 @@
+    A[User Input: Ingredients] --> B[Streamlit Web UI]
+    B --> C[Retriever (ChromaDB)]
+    C --> D[Relevant Recipe Context]
+
+    %% The Prompt Template receives both the user's question and the retrieved context
+    B -- "question" --> E[Prompt Template]
+    D -- "context" --> E
+
+    E --> F[LLM (Google Gemini)]
+    F --> G[Recipe Answer (JSON)]
+    G --> H[Streamlit UI: Display Result]
+
