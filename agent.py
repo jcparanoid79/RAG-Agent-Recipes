@@ -1,10 +1,10 @@
 
 import streamlit as st
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 import json
 from dotenv import load_dotenv
 import os
@@ -16,20 +16,17 @@ load_dotenv()
 # Get the Gemini API key from the environment variables
 gemini_api_key = os.getenv("GOOGLE_API_KEY")
 
-# Configure the Gemini API key
-genai.configure(api_key=gemini_api_key)
-
 # Set up the Streamlit app
 st.title("AI Recipe Agent")
 st.write("Enter your ingredients below (one per line) and I will find a recipe for you.")
 
 # Initialize the Gemini LLM
-llm = GoogleGenerativeAI(model="gemini-1.5-flash")
+llm = GoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=gemini_api_key)
 
 # Load the existing ChromaDB database
-embedding_function = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-vector_db = Chroma(persist_directory="./vector_db", embedding_function=embedding_function)
+vector_db = Chroma(persist_directory="./vector_db_sentence", embedding_function=embedding_function)
 
 # Create a retriever
 retriever = vector_db.as_retriever()
