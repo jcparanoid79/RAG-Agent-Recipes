@@ -1,0 +1,47 @@
+{
+  "ingredients": [
+    "chicken",
+    "rice",
+    "onions"
+  ],
+  "recipes": [
+    {
+      "title": "Chicken and Rice Casserole",
+      "ingredients": [
+        "1.5 lbs boneless, skinless chicken breasts, cooked and diced",
+        "1 cup uncooked long-grain rice",
+        "1 medium onion, chopped",
+        "1 (10.75 ounce) can condensed cream of mushroom soup",
+        "1/2 cup milk",
+        "1/2 cup shredded cheddar cheese",
+        "1/4 cup chopped green onions (optional)"
+      ],
+      "instructions": "Preheat oven to 350\u00b0F (175\u00b0C).  Combine cooked chicken, rice, onion, cream of mushroom soup, and milk in a greased 9x13 inch baking dish.  Top with cheddar cheese and green onions (if using). Bake for 20-25 minutes, or until heated through and bubbly."
+    },
+    {
+      "title": "Chicken Fried Rice",
+      "ingredients": [
+        "1 cup cooked chicken, diced",
+        "2 cups cooked rice",
+        "1/2 cup chopped onion",
+        "2 eggs, lightly beaten",
+        "2 tablespoons soy sauce",
+        "1 tablespoon vegetable oil",
+        "Optional: peas, carrots, other vegetables"
+      ],
+      "instructions": "Heat oil in a wok or large skillet over medium-high heat. Add onion and stir-fry for 1 minute. Add eggs and scramble until cooked. Add rice, chicken, and soy sauce. Stir-fry for 2-3 minutes, or until heated through.  Add optional vegetables and stir-fry for another minute. Serve hot."
+    },
+    {
+      "title": "Simple Chicken and Rice with Onions",
+      "ingredients": [
+        "1 lb boneless, skinless chicken breasts, cut into 1-inch pieces",
+        "1 cup uncooked long-grain rice",
+        "1 large onion, chopped",
+        "2 cups chicken broth",
+        "1 teaspoon salt",
+        "1/2 teaspoon black pepper"
+      ],
+      "instructions": "In a large pot or Dutch oven, saut\u00e9 onion in a little oil until softened. Add chicken and cook until browned. Stir in rice, chicken broth, salt, and pepper. Bring to a boil, then reduce heat to low, cover, and simmer for 15-20 minutes, or until rice is cooked and liquid is absorbed."
+    }
+  ]
+}

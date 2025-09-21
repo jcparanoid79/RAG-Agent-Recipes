@@ -17,12 +17,17 @@ def test_recipe_service():
         ingredients = ["chicken", "rice", "onions"]
         print(f"Testing with ingredients: {ingredients}")
         
-        # Get a recipe
-        recipe = recipe_service.get_recipe_by_ingredients(ingredients)
-        print("Recipe retrieved successfully:")
-        print(f"Title: {recipe.get('title', 'N/A')}")
-        print(f"Ingredients: {recipe.get('ingredients', 'N/A')}")
-        print(f"Instructions: {recipe.get('instructions', 'N/A')}")
+        # Get recipes
+        result = recipe_service.get_recipes_by_ingredients(ingredients)
+        recipes = result["recipes"]
+        filename = result["filename"]
+        print(f"Recipes retrieved successfully and saved to {filename}:")
+        for i, recipe in enumerate(recipes, 1):
+            print(f"Recipe {i}:")
+            print(f"  Title: {recipe.get('title', 'N/A')}")
+            print(f"  Ingredients: {recipe.get('ingredients', 'N/A')}")
+            print(f" Instructions: {recipe.get('instructions', 'N/A')}")
+            print()
         
     except Exception as e:
         print(f"Error: {e}")

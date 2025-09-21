@@ -22,13 +22,13 @@ class RecipeService:
         embedding_function = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         self._vector_db = Chroma(persist_directory="./vector_db_sentence", embedding_function=embedding_function)
         
-        # Create a retriever
-        self._retriever = self._vector_db.as_retriever()
+        # Create a retriever that returns 3 documents
+        self._retriever = self._vector_db.as_retriever(search_kwargs={"k": 3})
         
         # Create a prompt template
         prompt_template = """
-        You are an AI recipe assistant. A user will provide a list of ingredients, and you will try to find a relevant recipe from the provided context.
-        You must return the recipe in a JSON format with the following keys: "title", "ingredients", and "instructions".
+        You are an AI recipe assistant. A user will provide a list of ingredients, and you will try to find 3 relevant recipes from the provided context.
+        You must return the recipes in a JSON format as a list with each recipe having the following keys: "title", "ingredients", and "instructions".
         
         Context: {context}
         Question: {question}
@@ -46,15 +46,15 @@ class RecipeService:
             chain_type_kwargs={"prompt": PROMPT},
         )
     
-    def get_recipe_by_ingredients(self, ingredients: list) -> dict:
+    def get_recipes_by_ingredients(self, ingredients: list) -> dict:
         """
-        Retrieve a recipe based on provided ingredients.
+        Retrieve 3 recipes based on provided ingredients and save them to a JSON file.
         
         Args:
             ingredients (list): List of ingredient strings
             
         Returns:
-            dict: Recipe information with title, ingredients, and instructions
+            dict: Dictionary containing the list of recipes and the filename where they were saved
             
         Raises:
             ValueError: If ingredients list is empty or response parsing fails
@@ -67,7 +67,7 @@ class RecipeService:
         try:
             # Create a question for the chain
             ingredients_text = ", ".join(ingredients)
-            question = f"Find a recipe that uses the following ingredients: {ingredients_text}"
+            question = f"Find 3 different recipes that use the following ingredients: {ingredients_text}"
             
             # Get the answer
             answer = self._qa_chain({"query": question})
@@ -84,13 +84,27 @@ class RecipeService:
                 if result_text.endswith("```"):
                     result_text = result_text[:-3]  # Remove ```
                 
+                # Try to parse as a list of recipes first
                 json_result = json.loads(result_text.strip())
                 
-                # Ensure instructions is a string, not a list
-                if isinstance(json_result.get("instructions"), list):
-                    json_result["instructions"] = "\n".join(json_result["instructions"])
-                
-                return json_result
+                # If it's a single recipe, convert to a list
+                if isinstance(json_result, dict) and "title" in json_result:
+                    recipes = [json_result]
+                # If it's already a list of recipes, use it
+                elif isinstance(json_result, list):
+                    recipes = json_result
+                    # Ensure instructions is a string, not a list for each recipe
+                    for recipe in recipes:
+                        if isinstance(recipe.get("instructions"), list):
+                            recipe["instructions"] = "\n".join(recipe["instructions"])
+                else:
+                    # Unexpected format, return as a single recipe in a list
+                    recipes = [{
+                        "title": "Recipe",
+                        "ingredients": ingredients,
+                        "instructions": str(json_result) if json_result else "No instructions available"
+                    }]
+                    
             except json.JSONDecodeError:
                 # If the result is not a valid JSON, try to create a basic recipe structure
                 # This mimics the behavior of the Streamlit app
@@ -98,11 +112,32 @@ class RecipeService:
                 # Try to extract information from the text response
                 # This is a simple fallback, in a real implementation you might want to use
                 # a more sophisticated parsing approach
-                return {
+                recipes = [{
                     "title": "Recipe",
                     "ingredients": ingredients,
                     "instructions": result_text.strip() if result_text else "No instructions available"
-                }
+                }]
+            
+            # Save recipes to a JSON file
+            filename = f"recipes_{'_'.join(ingredients[:3])}.json"  # Use first 3 ingredients for filename
+            # Replace any characters that might cause issues in filenames
+            filename = filename.replace(" ", "_").replace("/", "_").replace("\\", "_")
+            
+            # Create the data to save
+            data_to_save = {
+                "ingredients": ingredients,
+                "recipes": recipes
+            }
+            
+            # Save to JSON file
+            with open(filename, 'w') as f:
+                json.dump(data_to_save, f, indent=2)
+            
+            # Return the recipes and filename
+            return {
+                "recipes": recipes,
+                "filename": filename
+            }
                 
         except Exception as e:
-            raise RuntimeError("Failed to retrieve recipe") from e
+            raise RuntimeError("Failed to retrieve recipes") from e
