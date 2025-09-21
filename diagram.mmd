@@ -1,12 +1,28 @@
-    A[User Input: Ingredients] --> B[Streamlit Web UI]
-    B --> C[Retriever (ChromaDB)]
-    C --> D[Relevant Recipe Context]
-
+graph TD
+    A[User Input: Ingredients] --> B[REST API Client]
+    B --> C[FastAPI Router]
+    C --> D[Recipe Service]
+    D --> E[Retriever ChromaDB]
+    E --> F[Relevant Recipe Context]
+    
     %% The Prompt Template receives both the user's question and the retrieved context
-    B -- "question" --> E[Prompt Template]
-    D -- "context" --> E
+    D -- "question" --> G[Prompt Template]
+    F -- context --> G
+    
+    G --> H[LLM Google Gemini]
+    H --> I[Recipe Answer JSON]
+    I --> J[REST API Response]
 
-    E --> F[LLM (Google Gemini)]
-    F --> G[Recipe Answer (JSON)]
-    G --> H[Streamlit UI: Display Result]
+        %% Styling
+    classDef clientStyle fill:#4F46E5,stroke:#4338CA,color:#FFFFFF
+    classDef serviceStyle fill:#10B981,stroke:#059669,color:#FFFFFF
+    classDef dataStyle fill:#F59E0B,stroke:#D97706,color:#FFFFFF
+    classDef llmStyle fill:#EF4444,stroke:#DC2626,color:#FFFFFF
+    classDef responseStyle fill:#8B5CF6,stroke:#7C3AED,color:#FFFFFF
+    
+    class A,B,C clientStyle
+    class D serviceStyle
+    class E,F dataStyle
+    class G,H llmStyle
+    class I,J responseStyle
 

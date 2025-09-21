@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  recipe-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - APP_ENV=production
+    volumes:
+      - ./vector_db_sentence:/app/vector_db_sentence
+    restart: unless-stopped
